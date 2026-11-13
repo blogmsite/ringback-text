@@ -1,0 +1,27 @@
+name: Unzip and deploy FCC post
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ringback-fcc-post.zip'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unzip FCC post
+        run: unzip -o ringback-fcc-post.zip
+      - name: Commit extracted files
+        run: |
+          rm -f ringback-fcc-post.zip
+          git config user.name "blogmsite"
+          git config user.email "blogmsite@users.noreply.github.com"
+          git add -A
+          git commit -m "Publish FCC post: TCPA revocation rule 25 November, guides, sitemap" || echo "Nothing to commit"
+          git push
