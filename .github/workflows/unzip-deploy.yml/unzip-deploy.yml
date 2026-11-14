@@ -1,0 +1,27 @@
+name: Unzip and deploy Brown Friday post
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ringback-brown-friday-post.zip'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unzip Brown Friday post
+        run: unzip -o ringback-brown-friday-post.zip
+      - name: Commit extracted files
+        run: |
+          rm -f ringback-brown-friday-post.zip
+          git config user.name "blogmsite"
+          git config user.email "blogmsite@users.noreply.github.com"
+          git add -A
+          git commit -m "Publish Brown Friday post: plumber's phone plan, guides, sitemap" || echo "Nothing to commit"
+          git push
